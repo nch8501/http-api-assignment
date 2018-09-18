@@ -25,25 +25,22 @@ const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const acceptedTypes = request.headers.accept.split(',');
   const params = query.parse(parsedUrl.query);
-  
-  switch(request.method){
-		case 'GET':
-			if(parsedUrl.pathname === '/'){
-				htmlHandler.getIndex(request, response);
-			}
-			else if(parsedUrl.pathname === '/style.css'){
-				htmlHandler.getCSS(request, response);
-			}
-			else if(urlStruct[parsedUrl.pathname]) {
+
+  switch (request.method) {
+    case 'GET':
+      if (parsedUrl.pathname === '/') {
+        htmlHandler.getIndex(request, response);
+      } else if (parsedUrl.pathname === '/style.css') {
+        htmlHandler.getCSS(request, response);
+      } else if (urlStruct[parsedUrl.pathname]) {
         urlStruct[parsedUrl.pathname](request, response, params, acceptedTypes);
+      } else {
+        urlStruct.notFound(request, response, params, acceptedTypes);
       }
-			else{
-				urlStruct.notFound(request, response, params, acceptedTypes);
-			}
-			break;
-		default:
       break;
-	}
+    default:
+      break;
+  }
 };
 
 http.createServer(onRequest).listen(port);
